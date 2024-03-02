@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef } from "react";
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import {
   GoogleMap,
   Marker,
@@ -14,13 +14,13 @@ type DirectionsResult = google.maps.DirectionsResult;
 type MapOptions = google.maps.MapOptions;
 
 export default function Map() {
-  const [office, setOffice] = useState<LatLngLiteral>();
+  const [office, setPlace] = useState<LatLngLiteral>();
   const [directions, setDirections] = useState<DirectionsResult>();
   const mapRef = useRef<GoogleMap>();
-  const center = useMemo<LatLngLiteral>(
-    () => ({ lat: 43.45, lng: -80.49 }),
-    []
-  );
+  const [center, setCenter] = useState<LatLngLiteral>({
+    lat: -1.9579,
+    lng: 30.1127,
+  }); // Default to Kigali, updated shortly
   const options = useMemo<MapOptions>(
     () => ({
       mapId: "b181cac70f27f5e6",
@@ -50,19 +50,37 @@ export default function Map() {
     );
   };
 
+  // useEffect(() => {
+  //   if (navigator.geolocation) {
+  //     navigator.geolocation.getCurrentPosition((position) => {
+  //       setCenter({
+  //         lat: position.coords.latitude,
+  //         lng: position.coords.longitude,
+  //       });
+  //     });
+  //   }
+  // }, []);
+
   return (
     <div className="container">
-      <div className="controls">
-        <h1>Commute?</h1>
+      {/* <div className="controls">
+        <h1>I want to live in</h1>
         <Places
-          setOffice={(position) => {
-            setOffice(position);
+          setPlace={(center) => {
+            setCenter(center);
+            mapRef.current?.panTo(center);
+          }}
+        />
+        <h1>My Office</h1>
+        <Places
+          setPlace={(position) => {
+            setPlace(position);
             mapRef.current?.panTo(position);
           }}
         />
         {!office && <p>Enter the address of your office.</p>}
         {directions && <Distance leg={directions.routes[0].legs[0]} />}
-      </div>
+      </div> */}
       <div className="map">
         <GoogleMap
           zoom={10}
